@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Universal Review Site</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .review-box {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      max-width: 500px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .stars span {
+      font-size: 25px;
+      cursor: pointer;
+      color: gray;
+    }
+
+    .stars span.active {
+      color: gold;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px;
+    }
+
+    button {
+      background: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #43a047;
+    }
+
+    .review {
+      background: white;
+      padding: 10px;
+      margin-top: 15px;
+      border-radius: 6px;
+    }
+
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Review Literally Anything</h1>
+
+<div class="review-box">
+  <input id="title" placeholder="Review title">
+
+  <div class="stars" id="stars">
+    <span data-value="1">★</span>
+    <span data-value="2">★</span>
+    <span data-value="3">★</span>
+    <span data-value="4">★</span>
+    <span data-value="5">★</span>
+  </div>
+
+  <textarea id="text" placeholder="Write your review..."></textarea>
+
+  <input type="file" id="image" accept="image/*">
+
+  <button onclick="submitReview()">Post Review</button>
+</div>
+
+<div id="reviews"></div>
+
+<script>
+  let rating = 0;
+
+  document.querySelectorAll(".stars span").forEach(star => {
+    star.addEventListener("click", () => {
+      rating = star.dataset.value;
+      document.querySelectorAll(".stars span").forEach(s =>
+        s.classList.toggle("active", s.dataset.value <= rating)
+      );
+    });
+  });
+
+  function submitReview() {
+    const title = document.getElementById("title").value;
+    const text = document.getElementById("text").value;
+    const imageFile = document.getElementById("image").files[0];
+
+    if (!title || !text || rating == 0) {
+      alert("pls fill everything out 🙏");
+      return;
+    }
+
+    const review = document.createElement("div");
+    review.className = "review";
+
+    review.innerHTML = `
+      <h3>${title}</h3>
+      <p>${"★".repeat(rating)}${"☆".repeat(5 - rating)}</p>
+      <p>${text}</p>
+    `;
+
+    if (imageFile) {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(imageFile);
+      review.appendChild(img);
+    }
+
+    document.getElementById("reviews").prepend(review);
+
+    // reset
+    document.getElementById("title").value = "";
+    document.getElementById("text").value = "";
+    document.getElementById("image").value = "";
+    rating = 0;
+    document.querySelectorAll(".stars span").forEach(s => s.classList.remove("active"));
+  }
+</script>
+
+</body>
+</html>
